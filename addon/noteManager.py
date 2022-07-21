@@ -122,13 +122,35 @@ Phrases：
 <hr>
 
 <script>
-document.querySelectorAll("span.en").forEach(e => e.remove());
 document.querySelectorAll("b").forEach(e => e.innerText = '[...]');
 </script>
 
 '''
 
 CARDS['Recall']['afmt'] = '''
+<table>
+    <tr>
+        <td><h1 class="term">{{term}}</h1><br><div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div></div></td>
+        <td><img {{image}} height="120px"></td>
+    </tr>
+</table>
+<hr>
+Definition：
+<div>Tap to View</div>
+<hr>
+Phrases：
+<p>{{phrase}}</p>
+<hr>
+Sentences：
+<p>{{sentence}}</p>
+{{BrEPron}}
+{{AmEPron}}
+'''
+CARDS['Sound']['qfmt'] = '''
+{{BrEPron}}
+{{AmEPron}}'''
+
+CARDS['Sound']['afmt'] = '''
 <table>
     <tr>
         <td><h1 class="term">{{term}}</h1><br><div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div></div></td>
@@ -158,20 +180,8 @@ def getOrCreateModelCardTemplate(modelObject, cardTemplateName):
     cardTemplate = mw.col.models.newTemplate(cardTemplateName)
     cardTemplate['qfmt'] = CARDS[cardTemplateName]['qfmt']
     cardTemplate['afmt'] = CARDS[cardTemplateName]['afmt']
-    modelObject['css'] = '''
-.card {
-    font-family: arial;
-    font-size: 20px;
-    text-align: left;
-    color: black;
-    background-color: white;
-}
-.term {
-    font-size : 35px;
-}
-    '''
+
     mw.col.models.addTemplate(modelObject, cardTemplate)
-    mw.col.models.add(modelObject)
 
 
 def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: dict):

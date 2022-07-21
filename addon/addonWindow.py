@@ -443,8 +443,24 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         currentConfig = self.getAndSaveCurrentConfig()
         model = getOrCreateModel(MODEL_NAME)
-        getOrCreateModelCardTemplate(model, 'Recognition')
-        getOrCreateModelCardTemplate(model, 'Recall')
+        if not mw.col.models.byName(MODEL_NAME):
+            getOrCreateModelCardTemplate(model, 'Recognition')
+            getOrCreateModelCardTemplate(model, 'Recall')
+            getOrCreateModelCardTemplate(model, 'Sound')
+
+            model['css'] = '''
+            .card {
+                font-family: arial;
+                font-size: 20px;
+                text-align: left;
+                color: black;
+                background-color: white;
+            }
+            .term {
+                font-size : 35px;
+            }
+                '''
+            mw.col.models.add(model)
 
         deck = getOrCreateDeck(self.deckComboBox.currentText(), model=model)
 
@@ -453,14 +469,16 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         newWordCount = self.newWordListWidget.count()
 
         # 判断是否需要下载发音
-        if currentConfig['noPron']:
-            logger.info('不下载发音')
-            whichPron = None
-        else:
-            whichPron = 'AmEPron' if self.AmEPronRadioButton.isChecked() else 'BrEPron'
-            logger.info(f'下载发音{whichPron}')
+        # if currentConfig['noPron']:
+        #     logger.info('不下载发音')
+        #     whichPron = None
+        # else:
+        #     whichPron = 'AmEPron' if self.AmEPronRadioButton.isChecked() else 'BrEPron'
+        #     logger.info(f'下载发音{whichPron}')
 
         added = 0
+        media_path = mw.col.media._dir
+
         for row in range(newWordCount):
             wordItem = self.newWordListWidget.item(row)
             wordItemData = wordItem.data(Qt.UserRole)
@@ -468,8 +486,23 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 addNoteToDeck(deck, model, currentConfig, wordItemData)
                 added += 1
                 # 添加发音任务
-                if whichPron and wordItemData.get(whichPron):
-                    audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}.mp3", wordItemData[whichPron],))
+                if wordItemData.get('AmEPron'):
+                    audiosDownloadTasks.append(
+                        (f"{media_path}/AmEPron_{wordItemData['term']}.mp3", wordItemData['AmEPron'],))
+                if wordItemData.get('BrEPron'):
+                    audiosDownloadTasks.append(
+                        (f"{media_path}/BrEPron_{wordItemData['term']}.mp3", wordItemData['BrEPron'],))
+
+                # elif whichPron and wordItemData.get(whichPron):
+                #     audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}.mp3", wordItemData[whichPron],))
+
+
+        logger.info(f'collection path {mw.col.path}')
+        logger.info(f'現在位置 {os.getcwd()}')
+        logger.info(f'{mw.col.media}')
+
+        # mw.col.name()
+        # (media_dir, media_db) = media_paths_from_col_path(self.path)
         mw.reset()
 
         logger.info(f'发音下载任务:{audiosDownloadTasks}')
