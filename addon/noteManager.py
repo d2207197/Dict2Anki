@@ -67,7 +67,6 @@ CARDS['Recognition']['qfmt'] = '''
 <table>
     <tr>
         <td><h1 class="term">{{term}}</h1><br><div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div></div></td>
-        <td><img {{image}} height="120px"></td>
     </tr>
 </table>
 <hr>
@@ -205,8 +204,8 @@ def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: 
                     es.append(f'<span class="en">{e}</span>')
                     cs.append(f'<span class="ch">{c}</span>')
 
-                newNote[configName] = '<br>\n<br>\n'.join(
-                    [f'{e}<br>\n{c}'
+                newNote[configName] = '\n'.join(
+                    [f'<p>{e}<br>\n{c}</p>'
                      for e, c in zip(es, cs)])
             # 图片
             elif configName == 'image':
