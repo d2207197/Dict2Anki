@@ -95,13 +95,13 @@ CARDS['Recognition']['afmt'] = '''
     </tr>
 </table>
 <hr>
-释义：
+Definition：
 <div>{{definition}}</div>
 <hr>
-短语：
+Phrases：
 <p>{{phrase}}</p>
 <hr>
-例句：
+Sentences：
 <p>{{sentence}}</p>
 '''
 
